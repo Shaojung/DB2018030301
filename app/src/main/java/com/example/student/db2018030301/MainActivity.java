@@ -11,6 +11,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,22 +37,12 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         Log.d("NET", response);
-                        try {
-                            JSONArray array = new JSONArray(response);
-                            int i;
-                            for (i = 0; i < array.length(); i++)
-                            {
-                                JSONObject obj = array.getJSONObject(i);
-                                String dis = obj.getString("district");
-                                data.add(dis);
-                                Log.d("NET", dis);
-                            }
-                            adapter.notifyDataSetChanged();
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                        Gson gson = new Gson();
+                        House newtpe[] = gson.fromJson(response, House[].class);
+                        for (House h : newtpe)
+                        {
+                            Log.d("NET", "Array:" + h.district);
                         }
-
                     }
                 }
                 , new Response.ErrorListener() {
