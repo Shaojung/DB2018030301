@@ -1,8 +1,11 @@
 package com.example.student.db2018030301;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -23,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     ListView lv;
     ArrayAdapter<String> adapter;
     ArrayList<String> data = new ArrayList<>();
+    House newtpe[];
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,11 +42,13 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(String response) {
                         Log.d("NET", response);
                         Gson gson = new Gson();
-                        House newtpe[] = gson.fromJson(response, House[].class);
+                        newtpe = gson.fromJson(response, House[].class);
                         for (House h : newtpe)
                         {
                             Log.d("NET", "Array:" + h.district);
+                            data.add(h.district);
                         }
+                        adapter.notifyDataSetChanged();
                     }
                 }
                 , new Response.ErrorListener() {
@@ -52,6 +58,15 @@ public class MainActivity extends AppCompatActivity {
                     }
                     }
         );
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Intent it = new Intent(MainActivity.this, DetailActivity.class);
+                    it.putExtra("mydata", newtpe[position]);
+                    startActivity(it);
+
+            }
+        });
         queue.add(request);
         queue.start();
     }
